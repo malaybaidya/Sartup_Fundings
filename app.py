@@ -7,7 +7,36 @@ df["date"]=pd.to_datetime(df["date"],format='mixed',errors="coerce")
 df["year"]=df["date"].dt.year
 st.set_page_config(layout="wide",page_title="Startup_Analysis")
 df["month"] = df["date"].dt.month
+def overall_analysis():
+    st.title("Overall Analysis")
+    #total invested amount
+    total=round(df["amount"].sum())
+    max_funding=df.groupby("startup")["amount"].max().sort_values(ascending=False).head(1).values[0]
+    avg_funding=df.groupby("startup")["amount"].sum().mean()
+    num_startup=df["startup"].nunique()
 
+    col1,col2,col3,col4=st.columns(4)
+    with col1:
+        st.metric("Total",str(total)+" Cr")
+    with col2:
+        st.metric("Max",str(max_funding)+" Cr")
+    with col3:
+        st.metric("Total",str(round(avg_funding))+" Cr")
+    with col4:
+        st.metric("Total",str(num_startup))
+
+
+    st.subheader("MoM Graph")
+    select_opt=st.selectbox("Select Type",["Total","Count"])
+    if select_opt=="Total":
+        temp_df = df.groupby(["year", "month"])["amount"].sum().reset_index()
+    else:
+        temp_df = df.groupby(["year", "month"])["amount"].count().reset_index()
+
+    temp_df["x_axis"] = temp_df["month"].astype(str) + "-" + temp_df["year"].astype(str)
+    fig3, ax3 = plt.subplots()
+    ax3.plot(temp_df["x_axis"],temp_df["amount"])
+    st.pyplot(fig3)
 
 
 def load_investor_details(select_investor):
@@ -46,7 +75,7 @@ option=st.sidebar.selectbox("Select One",["Overall Analysis","Startup","Investor
 
 #main structure
 if option=="Overall Analysis":
-        pass
+        overall_analysis()
 
 elif option=="Startup":
     st.sidebar.selectbox("Select Startup", sorted(df["startup"].unique()))
