@@ -1,5 +1,14 @@
 pandas
 plotly
 streamlit
+yfinance
 pandas-datareader
-matplotlib.pyplot
+prophet
+datetime
+PyDictionary
+nltk
+urllib3
+PyPDF2
+numpy
+openpyxl
+matplotlib
